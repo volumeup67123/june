@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="June Lorian - Your Garden. Collect flowers for every focus session completed.">
+  <meta name="theme-color" content="#B8D8D8">
+  <title>June Lorian — Your Garden</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lora:ital@0;1&display=swap');
+    
+    :root {
+      --font-serif: 'Lora', serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --bg-blue: #B8D8D8;
+      --card-cream: #f5ede0;
+      --accent-red: #C8394A;
+      --text-dark: #1a3a3a;
+      --text-medium: #2a5a5a;
+      --text-light: #3a6060;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { 
+      background: var(--bg-blue);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+
+    .app {
+      background: var(--bg-blue);
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      padding: 32px 24px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .grain {
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .logo {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-medium);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-dark);
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+
+    .tagline {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .spell-section {
+      background: var(--card-cream);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      position: relative;
+      border: 0.5px solid #c8b89a;
+    }
+
+    .spell-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #8a6a4a;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .spell-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .spell-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid #b8956a;
+      padding: 6px 0;
+      font-size: 16px;
+      color: #3a2010;
+      font-family: var(--font-serif);
+      font-style: italic;
+      outline: none;
+    }
+
+    .spell-input::placeholder { 
+      color: #c8a880;
+      font-style: italic;
+    }
+
+    .spell-btn {
+      background: var(--accent-red);
+      color: var(--card-cream);
+      border: none;
+      border-radius: 20px;
+      padding: 8px 18px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      letter-spacing: 0.04em;
+      transition: background 0.2s;
+    }
+    
+    .spell-btn:hover { 
+      background: #a82a3a;
+    }
+    
+    .spell-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 58, 58, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+    
+    .modal-overlay.show {
+      opacity: 1;
+    }
+    
+    .modal {
+      background: var(--card-cream);
+      border-radius: 20px;
+      padding: 32px 24px;
+      max-width: 360px;
+      width: 100%;
+      position: relative;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      border: 0.5px solid #c8b89a;
+    }
+    
+    .modal-overlay.show .modal {
+      transform: scale(1);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #8a6a4a;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+    
+    .modal-close:hover {
+      background: rgba(138, 106, 74, 0.1);
+    }
+    
+    .modal-flower {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .modal-flower img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      animation: flowerPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    @keyframes flowerPop {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    .modal-info {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .modal-date {
+      font-size: 12px;
+      color: #8a6a4a;
+      margin-bottom: 8px;
+    }
+    
+    .modal-video {
+      font-size: 13px;
+      color: #3a2010;
+      font-family: var(--font-serif);
+      font-style: italic;
+      line-height: 1.4;
+    }
+    
+    .modal-divider {
+      border: none;
+      border-top: 1px dashed #c8a880;
+      margin: 20px 0;
+    }
+    
+    .modal-memory-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: #8a6a4a;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    
+    .modal-memory-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #c8a880;
+      padding: 8px 0;
+      font-size: 13px;
+      color: #3a2010;
+      font-family: var(--font-sans);
+      outline: none;
+      resize: vertical;
+      min-height: 60px;
+    }
+    
+    .modal-memory-input::placeholder {
+      color: #c8a880;
+    }
+    
+    .modal-save-btn {
+      background: var(--accent-red);
+      color: var(--card-cream);
+      border: none;
+      border-radius: 20px;
+      padding: 10px 24px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      letter-spacing: 0.04em;
+      transition: background 0.2s;
+      margin-top: 16px;
+      width: 100%;
+    }
+    
+    .modal-save-btn:hover {
+      background: #a82a3a;
+    }
+
+    .garden-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #2a5050;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .garden-label span { 
+      flex: 1;
+      height: 0.5px;
+      background: #5a9090;
+      opacity: 0.4;
+    }
+
+    .garden {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      position: relative;
+    }
+
+    .flower-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 110px;
+    }
+
+    .flower-pot {
+      width: 60px;
+      height: 60px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    
+    .flower-pot:hover {
+      transform: scale(1.05);
+    }
+
+    .flower-name {
+      font-size: 10px;
+      color: #2a5050;
+      text-align: center;
+      letter-spacing: 0.04em;
+      line-height: 1.3;
+      max-width: 70px;
+      margin-top: 6px;
+    }
+
+    .flower-date {
+      font-size: 9px;
+      color: #5a8080;
+      margin-top: 4px;
+    }
+
+    .empty-slot {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 1.5px dashed #7aacac;
+      opacity: 0.4;
+      flex-shrink: 0;
+    }
+
+    .toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-dark);
+      color: var(--card-cream);
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      opacity: 0;
+      transition: opacity 0.4s;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 100;
+      max-width: 90vw;
+      text-align: center;
+    }
+    
+    .toast.show { 
+      opacity: 1;
+    }
+
+    .count-badge {
+      background: var(--accent-red);
+      color: var(--card-cream);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 8px;
+    }
+
+    .loading {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 12px;
+      padding: 20px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 11px;
+      color: var(--text-light);
+      font-style: italic;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 360px) {
+      .garden {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .app {
+        padding: 24px 16px 40px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .garden {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="grain"></div>
+    <div class="toast" id="toast"></div>
+
+    <div class="header">
+      <div class="logo">June Lorian</div>
+      <div class="title">your garden</div>
+      <div class="tagline">plant a spell, grow a life</div>
+    </div>
+
+    <div class="spell-section">
+      <div class="spell-label">enter your spell</div>
+      <div class="spell-input-row">
+        <input 
+          class="spell-input" 
+          id="spellInput" 
+          placeholder="what was your spell today?"
+          autocomplete="off"
+        />
+        <button class="spell-btn" id="bloomBtn" onclick="claimFlower()">bloom</button>
+      </div>
+    </div>
+
+    <div class="garden-label">
+      <span></span>
+    </div>
+
+    <div class="garden" id="garden">
+      <div class="loading">Loading your garden...</div>
+    </div>
+
+    <div class="footer">
+      <div style="margin-bottom: 8px; font-size: 10px; opacity: 0.8;">
+        want to tend your garden anytime?<br>tap the share button and "Add to Home Screen"
+      </div>
+      youtube.com/@JuneLorian
+    </div>
+  </div>
+
+  <!-- Flower Detail Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      
+      <div class="modal-flower" id="modalFlower">
+        <!-- Flower image will be inserted here -->
+      </div>
+      
+      <div class="modal-info">
+        <div class="modal-date" id="modalDate">bloomed on ...</div>
+        <div class="modal-video" id="modalVideo">through「...」</div>
+      </div>
+      
+      <hr class="modal-divider">
+      
+      <div class="modal-memory-label">what did you do that day? (optional)</div>
+      <textarea 
+        class="modal-memory-input" 
+        id="modalMemoryInput" 
+        placeholder="I finally started..."
+      ></textarea>
+      
+      <button class="modal-save-btn" onclick="saveMemory()">save memory</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
