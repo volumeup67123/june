@@ -1,5 +1,5 @@
 // Service Worker for PWA
-const CACHE_NAME = 'june-lorian-garden-v1';
+const CACHE_NAME = 'june-lorian-garden-v2';
 const urlsToCache = [
   '/',
   '/index.html',
